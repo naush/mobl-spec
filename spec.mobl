@@ -1,0 +1,204 @@
+application spec
+
+import ui
+import mobl::test
+import models::stars
+
+testSuite("math", [
+  setUp({
+  }),
+  testCase("round up", {
+    assertEqual(2, Math.round(1.5));
+    assertEqual(2, Math.round(1.6));
+    assertEqual(2, Math.round(1.7));
+    assertEqual(2, Math.round(1.8));
+    assertEqual(2, Math.round(1.9));
+  }),
+  testCase("round down", {
+    assertEqual(1, Math.round(1.4));
+    assertEqual(1, Math.round(1.3));
+    assertEqual(1, Math.round(1.2));
+    assertEqual(1, Math.round(1.1));
+  }),
+  testCase("absolute", {
+    assertEqual(0, Math.abs(0));
+    assertEqual(1, Math.abs(-1));
+    assertEqual(1, Math.abs(1));
+  }),
+  tearDown({
+  })
+]);
+
+testSuite("number", [
+  testCase("float comparison", {
+    assertEqual(true, 0.1 == 0.1);
+    assertEqual(false, 0.1 == 0.2);
+    assertEqual(true, 0.1 < 0.2);
+    assertEqual(false, 0.1 > 0.2);
+  }),
+  testCase("float and integer comparison", {
+    assertEqual(true, 1 == 1.0);
+    assertEqual(false, 1 == 2.0);
+    assertEqual(true, 1 < 2.0);
+    assertEqual(false, 1 > 2.0);
+  }),
+  testCase("toString", {
+  	var num = 1;
+    assertEqual(true, "1" == num.toString());
+    assertEqual(false, "2" == num.toString());
+  })
+]);
+
+var er = {
+  add(Star(name="Mars"));
+};
+
+testSuite("callback", [
+  setUp({
+    Star.all().destroyAll();
+  }),
+  testCase("click button once", {
+    click(er);
+    var count = Star.all().count();
+    assertEqual(1, count);
+  }),
+  testCase("click button twice", {
+    click(er);
+    click(er);
+    var count = Star.all().count();
+    assertEqual(2, count);
+  })
+]);
+
+testSuite("collection", [
+  setUp({
+    Star.all().destroyAll();
+  }),
+  testCase("count", {
+  	foreach (number in [1, 2, 3]) {
+      add(Star(name="Nova"));
+      var count = Star.all().count();
+      assertEqual(number, count);
+  	}
+  }),
+  testCase("all", {
+    add(Star(name="Mars"));
+    add(Star(name="Jupiter"));
+    add(Star(name="Mercury"));
+    var count = Star.all().count();
+    assertEqual(3, count);
+  }),
+  testCase("find by", {
+  	var mars = Star(name="Mars");
+    add(mars);
+    assertEqual(mars, Star.findBy("name", "Mars"));
+  }),
+  testCase("add", {
+    add(Star(name="Mars"));
+    var count = Star.all().count();
+    var name = Star.all().one().name;
+    assertEqual(1, count);
+    assertEqual("Mars", name);
+  }),
+  testCase("remove", {
+  	var star = Star(name="Mars");
+    add(star);
+    var count = Star.all().count();
+    assertEqual(1, count);
+    remove(star);
+    count = Star.all().count();
+    assertEqual(0, count);
+  }),
+  testCase("destroy all", {
+  	var star = Star(name="Mars");
+    add(star);
+    var count = Star.all().count();
+    assertEqual(1, count);
+    Star.all().destroyAll();
+    count = Star.all().count();
+    assertEqual(0, count);
+  })
+]);
+
+testSuite("operators", [
+  testCase("larger than", {
+    assertEqual(true, 2 > 1);
+    assertEqual(false, 1 > 1);
+    assertEqual(false, 0 > 1);
+  }),
+  testCase("less than", {
+    assertEqual(true, 1 < 2);
+    assertEqual(false, 1 < 1);
+    assertEqual(false, 1 < 0);
+  }),
+  testCase("equality", {
+    assertEqual(true, "Zef" == "Zef");
+    assertEqual(false, "Zef" == "Fez");
+  }),
+  testCase("inequality", {
+    assertEqual(false, "Zef" != "Zef");
+    assertEqual(true, "Zef" != "Fez");
+  }),
+  testCase("addition", {
+    assertEqual(1, 0 + 1);
+  }),
+  testCase("subtraction", {
+    assertEqual(1, 1 - 0);
+  }),
+  testCase("multiplication", {
+    assertEqual(1, 1 * 1);
+    assertEqual(0, 1 * 0);
+    assertEqual(1, -1 * -1);
+  }),
+  testCase("division", {
+    assertEqual(1, 1 / 1);
+    assertEqual(-1, -1 / 1);
+    assertEqual(-1, 1 / -1);
+    assertEqual("Infinity", 1 / 0);
+  }),
+  testCase("modulus", {
+    assertEqual(0, 4 % 2);
+    assertEqual(1, 4 % 3);
+    assertEqual(1, 4 % -3);
+    assertEqual(-1, -4 % 3);
+  })
+]);
+
+function sum(a : Num, b : Num) { a + b; }
+
+testSuite("assertEqual", [
+	testCase("true", {
+		assertEqual(true, true);
+	}),
+	testCase("string and number", {
+		assertEqual("1", 1);
+		assertEqual("1", "1");
+		assertEqual(1, "1");
+	}),
+	testCase("compare nulls", {
+		assertEqual(null, null);
+	}),
+	testCase("reference", {
+		var baku = "baku";
+		var tapir = baku;
+		assertEqual(baku, "baku");
+		assertEqual("baku", tapir);
+		assertEqual(baku, tapir);
+	}),
+	testCase("evaluate function", {
+		assertEqual(sum(1, 2), sum(2, 1));
+	})
+]);
+
+testSuite("sleep", [
+  testCase("sleep for 2000 ms", {
+    var start = now().getTime();
+    sleep(2000);
+    var duration = now().getTime() - start;
+    assertEqual(true, duration >= 2000);
+  })
+]);
+
+screen root() {
+  testRunner()
+}

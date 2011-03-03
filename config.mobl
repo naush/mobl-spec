@@ -1,0 +1,7 @@
+configuration
+
+debug
+
+title "Spec"
+
+stdlib "/Users/naush/Projects/eclipse/mobl-lib"

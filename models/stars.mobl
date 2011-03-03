@@ -1,0 +1,5 @@
+module models::stars
+
+entity Star {
+  name : String
+}
